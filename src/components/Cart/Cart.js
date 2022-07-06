@@ -13,14 +13,16 @@ function Cart(props) {
   );
 
   return (
-    <Modal>
+    <Modal onClick={props.onClick}>
       {cartItems}
       <div className={classes.total}>
         <span>Total amount</span>
         <span>NTD 300</span>
       </div>
       <div className={classes.actions}>
-        <button className={classes["button--alt"]}>Close</button>
+        <button onClick={props.onClick} className={classes["button--alt"]}>
+          Close
+        </button>
         <button className={classes.button}>Order</button>
       </div>
     </Modal>
