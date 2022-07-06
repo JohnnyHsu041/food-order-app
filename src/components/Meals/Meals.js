@@ -1,6 +1,5 @@
 import React from "react";
 
-import classes from "./Meals.module.css";
 import MealSummary from "./MealSummary";
 import AvaliableMeals from "./AvaliableMeals";
 
