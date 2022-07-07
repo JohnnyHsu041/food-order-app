@@ -43,12 +43,12 @@ const cartReducer = (state, action) => {
 
     let updatedItems = [...state.items];
 
-    if (existingItem.amount > 1) {
-      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
-      updatedItems[indexOfExistingItem] = updatedItem;
-    } else {
+    if (existingItem.amount === 1) {
       updatedItems.splice(indexOfExistingItem, 1);
       // alt: updatedItems = state.items.filter(item => item.id !== action.id);
+    } else {
+      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+      updatedItems[indexOfExistingItem] = updatedItem;
     }
 
     return { items: updatedItems, totalAmount: updatedTotalAmount };
