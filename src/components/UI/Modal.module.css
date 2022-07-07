@@ -16,7 +16,7 @@
   width: 90%;
   background-color: white;
   border-radius: 12px;
-  padding: 2rem 5rem;
+  padding: 2rem;
   margin: 0 auto;
   animation: slide-down 300ms ease-out forwards;
 }

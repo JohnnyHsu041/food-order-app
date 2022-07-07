@@ -9,24 +9,51 @@ const defaultCartState = {
 
 const cartReducer = (state, action) => {
   if (action.type === "ADD") {
-    // should not not push(), but concat() to generate a new array
-    let updatedItems = state.items.concat(action.item);
     const updatedTotalAmount =
       state.totalAmount + action.item.price * action.item.amount;
 
-    for (let prevItem of state.items) {
-      if (prevItem.id === action.item.id) {
-        prevItem.amount += action.item.amount;
-        updatedItems = state.items;
-        return { items: updatedItems, totalAmount: updatedTotalAmount };
-      }
+    const indexOfExistingItemInCart = state.items.findIndex(
+      (item) => item.id === action.item.id
+    );
+    const existingItem = state.items[indexOfExistingItemInCart];
+
+    let updatedItems;
+
+    if (existingItem) {
+      const updatedItem = {
+        ...existingItem,
+        amount: existingItem.amount + action.item.amount,
+      };
+      updatedItems = [...state.items];
+      updatedItems[indexOfExistingItemInCart] = updatedItem;
+    } else {
+      // should not not push(), but concat() to generate a new array
+      updatedItems = state.items.concat(action.item);
     }
 
     return { items: updatedItems, totalAmount: updatedTotalAmount };
   }
+
   if (action.type === "REMOVE") {
-    state.items.amount -= action.item;
+    const indexOfExistingItem = state.items.findIndex(
+      (item) => item.id === action.id
+    );
+    const existingItem = state.items[indexOfExistingItem];
+    const updatedTotalAmount = state.totalAmount - existingItem.price;
+
+    let updatedItems = [...state.items];
+
+    if (existingItem.amount > 1) {
+      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+      updatedItems[indexOfExistingItem] = updatedItem;
+    } else {
+      updatedItems.splice(indexOfExistingItem, 1);
+      // alt: updatedItems = state.items.filter(item => item.id !== action.id);
+    }
+
+    return { items: updatedItems, totalAmount: updatedTotalAmount };
   }
+
   return defaultCartState;
 };
 

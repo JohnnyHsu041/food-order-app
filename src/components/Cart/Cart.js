@@ -2,15 +2,34 @@ import React, { useContext } from "react";
 
 import CartContext from "../../store/cart-context";
 import Modal from "../UI/Modal";
+import CartItem from "./CartItem";
 import classes from "./Cart.module.css";
 
 function Cart(props) {
   const ctx = useContext(CartContext);
+  const hasItems = ctx.items.length > 0;
+
+  const cartItemRemoveHandler = (id) => {
+    ctx.removeItem(id);
+  };
+  const cartItemAddHandler = (item) => {
+    ctx.addItem({
+      ...item,
+      amount: 1,
+    });
+  };
 
   const cartItems = (
     <ul className={classes["cart-items"]}>
       {ctx.items.map((item) => (
-        <li key={item.id}>{item.name}</li>
+        <CartItem
+          key={item.id}
+          name={item.name}
+          price={item.price}
+          amount={item.amount}
+          onRemove={cartItemRemoveHandler.bind(null, item.id)} // to make sure the correct id is passed
+          onAdd={cartItemAddHandler.bind(null, item)} // to make sure the correct item is passed
+        />
       ))}
     </ul>
   );
@@ -26,7 +45,7 @@ function Cart(props) {
         <button onClick={props.onClick} className={classes["button--alt"]}>
           Close
         </button>
-        <button className={classes.button}>Order</button>
+        {hasItems && <button className={classes.button}>Order</button>}
       </div>
     </Modal>
   );
