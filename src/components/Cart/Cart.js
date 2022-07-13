@@ -8,6 +8,8 @@ import classes from "./Cart.module.css";
 
 function Cart(props) {
   const [isOrdered, setIsOrdered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const ctx = useContext(CartContext);
   const hasItems = ctx.items.length > 0;
@@ -24,6 +26,28 @@ function Cart(props) {
 
   const orderHandler = () => {
     setIsOrdered(true);
+  };
+
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+
+    await fetch(
+      "https://react-http-request-4403a-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json",
+      {
+        method: "POST",
+        header: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: userData,
+          orderItems: ctx.items,
+        }),
+      }
+    );
+
+    setIsSubmitting(false);
+    setDidSubmit(true);
+    ctx.clearCart();
   };
 
   const cartItems = (
@@ -54,15 +78,36 @@ function Cart(props) {
     </div>
   );
 
-  return (
-    <Modal onClick={props.onClick}>
+  const cartModalContent = (
+    <>
       {cartItems}
       <div className={classes.total}>
         <span>Total amount</span>
         <span>{ctx.totalAmount}</span>
       </div>
-      {isOrdered && <Checkout onCancel={props.onClick} />}
+      {isOrdered && (
+        <Checkout onCancel={props.onClick} onConfirm={submitOrderHandler} />
+      )}
       {!isOrdered && modalActions}
+    </>
+  );
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+  const didSubmitModalContent = (
+    <>
+      <p>Successfully sent the order!</p>
+      <div className={classes.actions}>
+        <button onClick={props.onClick} className={classes.button}>
+          Close
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <Modal onClick={props.onClick}>
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {isSubmitting && isSubmittingModalContent}
+      {!isSubmitting && didSubmit && didSubmitModalContent}
     </Modal>
   );
 }

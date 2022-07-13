@@ -44,6 +44,17 @@ function Checkout(props) {
 
   const confirmHandler = (event) => {
     event.preventDefault();
+
+    if (!formIsValid) return;
+
+    const userData = {
+      name: enteredName,
+      street: enteredStreet,
+      postalCode: enteredPostal,
+      city: enteredCity,
+    };
+
+    props.onConfirm(userData);
   };
 
   const nameInputClasses = nameInputHasError
